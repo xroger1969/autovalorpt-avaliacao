@@ -4,128 +4,203 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>AutoValorPT — Pedido de Avaliação</title>
-  <!-- estilos mantêm-se como no ficheiro actual -->
   <style>
-    /* … mesmo CSS da versão simplificada … */
+    body{font-family:Arial, sans-serif; max-width:820px; margin:24px auto; padding:0 12px;}
+    h1{margin:0 0 6px;}
+    .sub{margin:0 0 18px; opacity:.8;}
+    label{display:block; margin-top:14px; font-weight:700;}
+    input, select, textarea, button{width:100%; padding:10px; margin-top:6px; box-sizing:border-box;}
+    textarea{min-height:120px;}
+    .row{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+    .row3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;}
+    .hint{font-size:.9rem; opacity:.75; margin-top:6px;}
+    .status{margin-top:14px; padding:10px; border:1px solid #ddd; border-radius:10px; display:none; white-space:pre-line;}
+    .ok{border-color:#9bd49b; background:#efffef;}
+    .err{border-color:#e0a3a3; background:#fff1f1;}
+    button{margin-top:18px; cursor:pointer;}
+    .small{font-size:.9rem; opacity:.8;}
   </style>
 </head>
 <body>
   <h1>AutoValorPT — Pedido de Avaliação</h1>
-  <p class="sub">Preenche os dados e anexa fotos da viatura. Receberás resposta assim que possível.</p>
-
+  <p class="sub">Preenche os dados e anexa fotos da viatura. Assim que possível entramos em contacto.</p>
   <form id="form">
-    <!-- dados pessoais -->
     <div class="row">
       <div>
         <label>Nome *</label>
         <input name="nome" required />
       </div>
       <div>
-        <label>E‑mail *</label>
+        <label>E-mail *</label>
         <input name="email" type="email" required />
       </div>
     </div>
     <label>Contacto *</label>
     <input name="contacto" type="tel" placeholder="+351 ..." required />
-
-    <!-- dados da viatura -->
-    <label>Marca *</label>
-    <input name="marca" required />
-    <label>Modelo *</label>
-    <input name="modelo" required />
+    <h3 style="margin-top:22px;">Dados da viatura</h3>
     <div class="row">
       <div>
-        <label>Ano *</label>
-        <input name="ano" type="number" min="1900" max="2099" step="1" required />
+        <label>Marca</label>
+        <input name="marca" placeholder="Ex.: BMW" />
       </div>
       <div>
-        <label>Quilómetros *</label>
-        <input name="km" type="number" min="0" required />
+        <label>Modelo</label>
+        <input name="modelo" placeholder="Ex.: Série 3" />
       </div>
     </div>
-    <label>Combustível *</label>
-    <input name="combustivel" placeholder="Gasolina, Gasóleo, Eléctrico…" required />
-    <label>Caixa de velocidades *</label>
-    <input name="caixa" placeholder="Manual, Automática…" required />
-    <label>Versão</label>
-    <input name="versao" />
-    <label>Matrícula</label>
-    <input name="matricula" />
-
-    <!-- outras informações -->
+    <div class="row3">
+      <div>
+        <label>Ano</label>
+        <input name="ano" inputmode="numeric" placeholder="Ex.: 2017" />
+      </div>
+      <div>
+        <label>Quilometragem (km)</label>
+        <input name="km" inputmode="numeric" placeholder="Ex.: 120000" />
+      </div>
+      <div>
+        <label>Combustível</label>
+        <select name="combustivel">
+          <option value="">—</option>
+          <option>Gasolina</option>
+          <option>Gasóleo</option>
+          <option>Híbrido</option>
+          <option>Híbrido Plug-in</option>
+          <option>Elétrico</option>
+          <option>GPL</option>
+          <option>Outro</option>
+        </select>
+      </div>
+    </div>
+    <div class="row">
+      <div>
+        <label>Caixa</label>
+        <select name="caixa">
+          <option value="">—</option>
+          <option>Manual</option>
+          <option>Automática</option>
+          <option>Outra</option>
+        </select>
+      </div>
+      <div>
+        <label>Versão</label>
+        <input name="versao" placeholder="Ex.: Pack M / AMG Line / Tekna..." />
+      </div>
+    </div>
+    <label>Matrícula (opcional)</label>
+    <input name="matricula" placeholder="Ex.: 12-AB-34" />
     <label>Observações</label>
-    <textarea name="observacoes" placeholder="Ex.: extras, estado geral…"></textarea>
-
+    <textarea name="observacoes" placeholder="Estado geral, histórico, extras, se tem acidentes, revisões, pneus, motor, documentos relevantes."></textarea>
     <label>Fotos da viatura *</label>
     <input id="fotos" type="file" accept="image/*" multiple required />
-    <div class="hint">Máximo 12 fotos. Sugestão: frente, trás, laterais, interior, painel e motor.</div>
-
+    <div class="hint">Máximo 12 fotos. Sugestão: frente, trás, laterais, interior, painel, quilómetros, pneus, motor, documentos relevantes.</div>
     <button id="btn" type="submit">Enviar pedido</button>
     <p class="small">Ao enviar, aceitas que os dados sejam usados apenas para análise da avaliação AutoValorPT.</p>
   </form>
-
   <div id="status" class="status"></div>
-
 <script>
-// mesmas constantes que já existiam
-const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyJukiTX7W7Wz-QdU651LkSoqWSfHko6c1rTY6tppIDjBLkEWXU1dE4QlCjPq6kPac-/exec";
-const NOTIFICATION_EMAIL = "c.vasconcelos1969@gmail.com";
-const MAX_PHOTOS = 12;
-const MAX_TOTAL_MB = 40;
-const MAX_DIM = 1600;
-const JPEG_QUALITY = 0.8;
-
-const form = document.getElementById("form");
-const fotosInput = document.getElementById("fotos");
-const statusBox = document.getElementById("status");
-const btn = document.getElementById("btn");
-
-// funções auxiliares iguais às anteriores: setStatus, bytesToMB, compressImageToBase64 …
-
-form.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  statusBox.style.display = "none";
-
-  const fotos = Array.from(fotosInput.files || []);
-  if (!fotos.length) return setStatus("Por favor, seleciona pelo menos 1 foto.", "err");
-  if (fotos.length > MAX_PHOTOS) return setStatus(`Selecionaste ${fotos.length} fotos. Máximo permitido: ${MAX_PHOTOS}.`, "err");
-
-  btn.disabled = true;
-  btn.textContent = "A enviar...";
-
-  try {
-    setStatus("A enviar dados do pedido...");
-
-    const fd = new FormData(form);
-    const payloadInit = new URLSearchParams();
-    payloadInit.set("action", "init");
-    // inclui também os campos da viatura no payload
-    ["nome","email","contacto","observacoes","marca","modelo","ano","km","combustivel","caixa","versao","matricula"].forEach((key) => {
-      payloadInit.set(key, (fd.get(key) || "").toString().trim());
-    });
-    payloadInit.set("totalFotos", String(fotos.length));
-    payloadInit.set("notificationEmail", NOTIFICATION_EMAIL);
-
-    const initResponse = await fetch(WEBAPP_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
-      body: payloadInit.toString()
-    });
-
-    const init = await initResponse.json();
-    if (!init.ok) throw new Error(init.error || "Não foi possível iniciar o pedido.");
-
-    // ciclo de upload de fotos igual ao ficheiro actual …
-
-    setStatus("Pedido enviado com sucesso ✅ Obrigado! Vamos entrar em contacto.");
-    form.reset();
-  } catch (error) {
-    setStatus("Erro: " + String(error.message || error), "err");
-  } finally {
-    btn.disabled = false;
-    btn.textContent = "Enviar pedido";
+  const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyJukiTX7W7Wz-QdU651LkSoqWSfHko6c1rTY6tppIDjBLkEWXU1dE4QlCjPq6kPac-/exec";
+  const MAX_PHOTOS = 12;
+  const MAX_TOTAL_MB = 40;
+  const MAX_DIM = 1600;
+  const JPEG_QUALITY = 0.80;
+  const form = document.getElementById("form");
+  const fotosInput = document.getElementById("fotos");
+  const statusBox = document.getElementById("status");
+  const btn = document.getElementById("btn");
+  function setStatus(msg, type="ok") {
+    statusBox.className = "status " + (type === "err" ? "err" : "ok");
+    statusBox.style.display = "block";
+    statusBox.textContent = msg;
   }
-});
+  function bytesToMB(b){ return b / (1024 * 1024); }
+  async function compressImageToBase64(file) {
+    const dataUrl = await new Promise((resolve, reject) => {
+      const fr = new FileReader();
+      fr.onload = () => resolve(fr.result);
+      fr.onerror = reject;
+      fr.readAsDataURL(file);
+    });
+    const img = await new Promise((resolve, reject) => {
+      const i = new Image();
+      i.onload = () => resolve(i);
+      i.onerror = reject;
+      i.src = dataUrl;
+    });
+    let w = img.width, h = img.height;
+    const maxSide = Math.max(w, h);
+    if (maxSide > MAX_DIM) {
+      const scale = MAX_DIM / maxSide;
+      w = Math.round(w * scale);
+      h = Math.round(h * scale);
+    }
+    const canvas = document.createElement("canvas");
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0, w, h);
+    const outDataUrl = canvas.toDataURL("image/jpeg", JPEG_QUALITY);
+    const base64 = outDataUrl.split(",")[1];
+    return { base64, mimeType: "image/jpeg" };
+  }
+  form.addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    statusBox.style.display = "none";
+    const fotos = Array.from(fotosInput.files || []);
+    if (!fotos.length) return setStatus("Por favor, seleciona pelo menos 1 foto.", "err");
+    if (fotos.length > MAX_PHOTOS) return setStatus(`Selecionaste ${fotos.length} fotos. Máximo permitido: ${MAX_PHOTOS}.`, "err");
+    btn.disabled = true;
+    btn.textContent = "A enviar...";
+    try {
+      setStatus("A enviar dados do pedido...");
+      const fd = new FormData(form);
+      const payloadInit = new URLSearchParams();
+      payloadInit.set("action", "init");
+      [
+        "nome","email","contacto","marca","modelo","ano","km",
+        "combustivel","caixa","versao","matricula","observacoes"
+      ].forEach(k => payloadInit.set(k, (fd.get(k) || "").toString().trim()));
+      payloadInit.set("totalFotos", String(fotos.length));
+      const r1 = await fetch(WEBAPP_URL, {
+        method: "POST",
+        headers: {"Content-Type":"application/x-www-form-urlencoded;charset=UTF-8"},
+        body: payloadInit.toString()
+      });
+      const init = await r1.json();
+      if (!init.ok) throw new Error(init.error || "Não foi possível iniciar o pedido.");
+      const { submissionId, folderId } = init;
+      let totalBytes = 0;
+      for (let i = 0; i < fotos.length; i++) {
+        setStatus(`A preparar e enviar fotos... (${i+1}/${fotos.length})`);
+        const file = fotos[i];
+        const { base64, mimeType } = await compressImageToBase64(file);
+        totalBytes += Math.floor(base64.length * 0.75);
+        if (bytesToMB(totalBytes) > MAX_TOTAL_MB) {
+          throw new Error(`O total das imagens ficou demasiado pesado (~${bytesToMB(totalBytes).toFixed(1)} MB). Envia menos fotos ou fotos mais leves.`);
+        }
+        const payloadUp = new URLSearchParams();
+        payloadUp.set("action", "upload");
+        payloadUp.set("submissionId", submissionId);
+        payloadUp.set("folderId", folderId);
+        payloadUp.set("filename", file.name || `foto_${i+1}.jpg`);
+        payloadUp.set("mimeType", mimeType);
+        payloadUp.set("fileBase64", base64);
+        const r2 = await fetch(WEBAPP_URL, {
+          method: "POST",
+          headers: {"Content-Type":"application/x-www-form-urlencoded;charset=UTF-8"},
+          body: payloadUp.toString()
+        });
+        const up = await r2.json();
+        if (!up.ok) throw new Error(up.error || "Falha no upload de uma das fotos.");
+      }
+      setStatus("Pedido enviado com sucesso ✅ Obrigado! Vamos entrar em contacto.");
+      form.reset();
+    } catch (err) {
+      setStatus("Erro: " + String(err.message || err), "err");
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Enviar pedido";
+    }
+  });
 </script>
 </body>
 </html>
