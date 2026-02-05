@@ -12,7 +12,7 @@
 const SHEET_ID = 'ID_DA_TUA_SHEET_AQUI';
 const SHEET_NAME = 'Submissoes';
 const DRIVE_PARENT_FOLDER_ID = 'ID_DA_TUA_PASTA_DRIVE_AQUI';
-const NOTIFICATION_EMAIL = 'teu-email@dominio.com';
+const NOTIFICATION_EMAIL = 'c.vasconcelos1969@gmail.com';
 const EMAIL_SUBJECT_PREFIX = '[AutoValorPT]';
 
 // =========================
