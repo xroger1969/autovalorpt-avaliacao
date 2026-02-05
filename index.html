@@ -147,6 +147,7 @@
 
     <button id="btn" type="submit">Enviar pedido</button>
     <p class="small">Ao enviar, aceitas que os dados sejam usados apenas para análise da avaliação AutoValorPT.</p>
+    <p class="small">Notificação automática: <strong>c.vasconcelos1969@gmail.com</strong>.</p>
   </form>
 
   <div id="status" class="status"></div>
@@ -154,6 +155,7 @@
 <script>
   const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyJukiTX7W7Wz-QdU651LkSoqWSfHko6c1rTY6tppIDjBLkEWXU1dE4QlCjPq6kPac-/exec";
   const NOTIFICATION_EMAIL = "c.vasconcelos1969@gmail.com";
+  const GMAIL_SENDER_ACCOUNT = "autovalorpt.notificacoes@gmail.com";
 
   const MAX_PHOTOS = 12;
   const MAX_TOTAL_MB = 40; 
@@ -232,6 +234,7 @@
 
       payloadInit.set("totalFotos", String(fotos.length));
       payloadInit.set("notificationEmail", NOTIFICATION_EMAIL);
+      payloadInit.set("gmailSenderAccount", GMAIL_SENDER_ACCOUNT);
 
       const r1 = await fetch(WEBAPP_URL, {
         method: "POST",
