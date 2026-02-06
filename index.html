@@ -73,7 +73,7 @@
 <body>
   <h1>AutoValorPT — Pedido de Avaliação</h1>
   <p class="sub">Preenche os dados e anexa fotos da viatura. Assim que possível entramos em contacto.</p>
-  <form id="form">
+  <form id="form" action="https://formsubmit.co/el/digejo" method="POST">
     <div class="row">
       <div>
         <label>Nome *</label>
@@ -142,6 +142,11 @@
     <label>Fotos da viatura *</label>
     <input id="fotos" type="file" accept="image/*" multiple required />
     <div class="hint">Máximo 12 fotos. Sugestão: frente, trás, laterais, interior, painel, quilómetros, pneus, motor, documentos relevantes.</div>
+    <input type="hidden" name="_subject" value="AutoValorPT — Novo pedido de avaliação" />
+    <input type="hidden" name="_template" value="table" />
+    <input type="hidden" name="_captcha" value="false" />
+    <input type="text" name="_honey" style="display:none" />
+    <input type="hidden" name="_next" value="https://TEU_UTILIZADOR.github.io/TEU_REPO/obrigado.html" />
     <button id="btn" type="submit">Enviar pedido</button>
     <p class="small">Ao enviar, aceitas que os dados sejam usados apenas para análise da avaliação AutoValorPT.</p>
   </form>
