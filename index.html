@@ -71,7 +71,7 @@
 <body>
   <h1>AutoValorPT — Pedido de Avaliação</h1>
   <p class="sub">Preenche os dados e anexa fotos da viatura. Assim que possível entramos em contacto.</p>
-  <form id="form" action="https://formspree.io/f/mlgwerqd" method="POST" enctype="multipart/form-data">
+  <form id="form" action="https://formsubmit.co/el/digejo" method="POST" enctype="multipart/form-data">
     <div class="row">
       <div>
         <label>Nome *</label>
@@ -143,6 +143,7 @@
     <input type="hidden" name="_subject" value="AutoValorPT — Novo pedido de avaliação" />
     <input type="hidden" name="_template" value="table" />
     <input type="hidden" name="_captcha" value="false" />
+    <input type="hidden" name="_autoresponse" value="Recebemos o teu pedido de avaliação na AutoValorPT. Em breve entraremos em contacto. Obrigado!" />
     <input type="text" name="_honey" style="display:none" />
     <input type="hidden" name="_next" value="https://TEU_UTILIZADOR.github.io/TEU_REPO/obrigado.html" />
     <button id="btn" type="submit">Enviar pedido</button>
@@ -152,7 +153,7 @@
   <div id="status" class="status"></div>
   <script>
     const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyJukiTX7W7Wz-QdU651LkSoqWSfHko6c1rTY6tppIDjBLkEWXU1dE4QlCjPq6kPac-/exec";
-    const FORMSUBMIT_URL = "https://formspree.io/f/mlgwerqd";
+    const FORMSUBMIT_URL = "https://formsubmit.co/el/digejo";
     const MAX_PHOTOS = 12;
     const MAX_TOTAL_MB = 40;
     const MAX_DIM = 1600;
@@ -179,14 +180,13 @@
         if (typeof totalFotos === "number") payload.set("totalFotos", String(totalFotos));
         const response = await fetch(FORMSUBMIT_URL, {
           method: "POST",
-          headers: { "Accept": "application/json" },
           body: payload
         });
         if (!response.ok) {
-          console.warn("Formspree respondeu com erro:", response.status);
+          console.warn("FormSubmit respondeu com erro:", response.status);
         }
       } catch (err) {
-        console.warn("Falha ao enviar notificação via Formspree:", err);
+        console.warn("Falha ao enviar notificação via FormSubmit:", err);
       }
     }
 
