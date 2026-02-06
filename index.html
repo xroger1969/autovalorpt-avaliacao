@@ -169,11 +169,23 @@
 
     function bytesToMB(b){ return b / (1024 * 1024); }
 
-    async function sendFormsubmitNotification(formData) {
+    async function sendFormsubmitNotification(formData, totalFotos) {
       try {
-        await fetch(FORMSUBMIT_URL, { method: "POST", body: formData, mode: "no-cors" });
+        const payload = new FormData();
+        formData.forEach((value, key) => payload.append(key, value));
+        const email = formData.get("email");
+        if (email) payload.set("_replyto", email.toString().trim());
+        if (typeof totalFotos === "number") payload.set("totalFotos", String(totalFotos));
+        const response = await fetch(FORMSUBMIT_URL, {
+          method: "POST",
+          headers: { "Accept": "application/json" },
+          body: payload
+        });
+        if (!response.ok) {
+          console.warn("Formspree respondeu com erro:", response.status);
+        }
       } catch (err) {
-        console.warn("Falha ao enviar notificação via FormSubmit:", err);
+        console.warn("Falha ao enviar notificação via Formspree:", err);
       }
     }
 
@@ -247,7 +259,7 @@
           const up = await r2.json();
           if (!up.ok) throw new Error(up.error || "Falha no upload de uma das fotos.");
         }
-        await sendFormsubmitNotification(notificationData);
+        await sendFormsubmitNotification(notificationData, fotos.length);
         setStatus("Pedido enviado com sucesso ✅ Obrigado! Vamos entrar em contacto.");
         form.reset();
       } catch (err) {
