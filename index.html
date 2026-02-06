@@ -71,7 +71,7 @@
 <body>
   <h1>AutoValorPT — Pedido de Avaliação</h1>
   <p class="sub">Preenche os dados e anexa fotos da viatura. Assim que possível entramos em contacto.</p>
-  <form id="form" action="https://formsubmit.co/el/digejo" method="POST">
+  <form id="form" action="https://formspree.io/f/mlgwerqd" method="POST" enctype="multipart/form-data">
     <div class="row">
       <div>
         <label>Nome *</label>
@@ -138,7 +138,7 @@
     <label>Observações</label>
     <textarea name="observacoes" placeholder="Estado geral, histórico, extras, se tem acidentes, revisões, pneus, motor, documentos relevantes."></textarea>
     <label>Fotos da viatura *</label>
-    <input id="fotos" type="file" accept="image/*" multiple required />
+    <input id="fotos" name="upload" type="file" accept="image/*" multiple required />
     <div class="hint">Máximo 12 fotos. Sugestão: frente, trás, laterais, interior, painel, quilómetros, pneus, motor, documentos relevantes.</div>
     <input type="hidden" name="_subject" value="AutoValorPT — Novo pedido de avaliação" />
     <input type="hidden" name="_template" value="table" />
@@ -151,7 +151,7 @@
   <div id="status" class="status"></div>
   <script>
     const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyJukiTX7W7Wz-QdU651LkSoqWSfHko6c1rTY6tppIDjBLkEWXU1dE4QlCjPq6kPac-/exec";
-    const FORMSUBMIT_URL = "https://formsubmit.co/el/digejo";
+    const FORMSUBMIT_URL = "https://formspree.io/f/mlgwerqd";
     const MAX_PHOTOS = 12;
     const MAX_TOTAL_MB = 40;
     const MAX_DIM = 1600;
