@@ -151,6 +151,7 @@
   <div id="status" class="status"></div>
   <script>
     const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyJukiTX7W7Wz-QdU651LkSoqWSfHko6c1rTY6tppIDjBLkEWXU1dE4QlCjPq6kPac-/exec";
+    const FORMSUBMIT_URL = "https://formsubmit.co/el/digejo";
     const MAX_PHOTOS = 12;
     const MAX_TOTAL_MB = 40;
     const MAX_DIM = 1600;
@@ -167,6 +168,14 @@
     }
 
     function bytesToMB(b){ return b / (1024 * 1024); }
+
+    async function sendFormsubmitNotification(formData) {
+      try {
+        await fetch(FORMSUBMIT_URL, { method: "POST", body: formData, mode: "no-cors" });
+      } catch (err) {
+        console.warn("Falha ao enviar notificação via FormSubmit:", err);
+      }
+    }
 
     async function compressImageToBase64(file) {
       const dataUrl = await new Promise((resolve, reject) => {
@@ -201,6 +210,7 @@
     form.addEventListener("submit", async (ev) => {
       ev.preventDefault();
       statusBox.style.display = "none";
+      const notificationData = new FormData(form);
       const fotos = Array.from(fotosInput.files || []);
       if (!fotos.length) return setStatus("Por favor, seleciona pelo menos 1 foto.", "err");
       if (fotos.length > MAX_PHOTOS) return setStatus(`Selecionaste ${fotos.length} fotos. Máximo permitido: ${MAX_PHOTOS}.`, "err");
@@ -237,6 +247,7 @@
           const up = await r2.json();
           if (!up.ok) throw new Error(up.error || "Falha no upload de uma das fotos.");
         }
+        await sendFormsubmitNotification(notificationData);
         setStatus("Pedido enviado com sucesso ✅ Obrigado! Vamos entrar em contacto.");
         form.reset();
       } catch (err) {
